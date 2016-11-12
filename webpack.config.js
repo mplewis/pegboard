@@ -11,6 +11,10 @@ module.exports = {
         loader: 'style-loader!css-loader'
       },
       {
+        test: /\.(jpe?g|png|gif|svg)$/,
+        loader: 'file-loader'
+      },
+      {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: 'url-loader?limit=10000&minetype=application/font-woff'
       },
