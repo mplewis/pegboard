@@ -1,9 +1,9 @@
 import React from 'react'
 import SplitPane from 'react-split-pane'
 
-import './ide.css'
+import './editor.css'
 
-export default class Ide extends React.Component {
+export default class Editor extends React.Component {
   render () {
     return (
       <SplitPane split="vertical" defaultSize="50%">

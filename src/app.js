@@ -1,10 +1,5 @@
-import React from 'react'
+import React from 'react'  // eslint-disable-line
 import ReactDOM from 'react-dom'
-import Ide from './components/ide'
+import routes from './routes'
 
-import 'bootstrap/dist/css/bootstrap.css'
-
-ReactDOM.render(
-  <Ide />,
-  document.querySelector('#app')
-)
+ReactDOM.render(routes, document.querySelector('#app'))

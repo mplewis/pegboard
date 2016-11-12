@@ -1,0 +1,17 @@
+.Resizer {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.Resizer.horizontal {
+  height: 8px;
+  cursor: row-resize;
+}
+
+.Resizer.vertical {
+  width: 8px;
+  cursor: col-resize;
+}
+
+Resizer.disabled {
+  cursor: not-allowed;
+}
