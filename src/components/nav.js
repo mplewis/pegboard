@@ -1,26 +1,28 @@
 import React from 'react'
-import {Navbar, Nav, NavItem} from 'react-bootstrap'
+import {Navbar, NavItem, Nav as BNav} from 'react-bootstrap'
 import {Link} from 'react-router'
 import {LinkContainer} from 'react-router-bootstrap'
 
-export default class Ide extends React.Component {
+import './nav.css'
+
+export default class Nav extends React.Component {
   render () {
     return (
       <span>
-        <Navbar>
+        <Navbar staticTop>
           <Navbar.Header>
             <Navbar.Brand>
               <Link to="/">Pegboard IDE</Link>
             </Navbar.Brand>
           </Navbar.Header>
-          <Nav>
+          <BNav>
             <LinkContainer to="/editor">
               <NavItem>Editor</NavItem>
             </LinkContainer>
             <LinkContainer to="/demo">
               <NavItem>Demo</NavItem>
             </LinkContainer>
-          </Nav>
+          </BNav>
         </Navbar>
         {this.props.children}
       </span>

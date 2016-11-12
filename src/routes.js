@@ -4,8 +4,6 @@ import Base from './components/base'
 import Editor from './components/editor'
 import Demo from './components/demo'
 
-import 'bootstrap/dist/css/bootstrap.css'
-
 export default (
   <Router history={hashHistory}>
     <Redirect from="/" to="editor" />
