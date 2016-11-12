@@ -8,7 +8,7 @@ import './nav.css'
 export default class Nav extends React.Component {
   render () {
     return (
-      <span>
+      <div>
         <Navbar staticTop>
           <Navbar.Header>
             <Navbar.Brand>
@@ -25,7 +25,7 @@ export default class Nav extends React.Component {
           </BNav>
         </Navbar>
         {this.props.children}
-      </span>
+      </div>
     )
   }
 }

@@ -7,5 +7,9 @@ module.exports = {
     'standard',
     'promise',
     'react',
-  ]
+  ],
+  env: {
+    'browser': true,
+    'node': true
+  }
 }

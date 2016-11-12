@@ -3,6 +3,7 @@ import AceEditor from 'react-ace'
 
 import 'brace/mode/javascript'
 import 'brace/theme/tomorrow'
+import './peg-editor.css'
 
 function onChange (newValue) {
   console.log(`Chars: ${newValue.length}`)
