@@ -1,7 +1,8 @@
 import React from 'react'  // eslint-disable-line
 import ReactDOM from 'react-dom'
+import Ide from './components/ide'
 
 ReactDOM.render(
-  <h1>Hello, world!</h1>,
+  <Ide />,
   document.querySelector('#app')
 )
