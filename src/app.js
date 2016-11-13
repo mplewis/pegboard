@@ -1,5 +1,25 @@
-import React from 'react'  // eslint-disable-line
-import ReactDOM from 'react-dom'
-import routes from './routes'
+import $ from 'jquery'
+import 'kendo/kendo.ui.Splitter'
 
-ReactDOM.render(routes, document.querySelector('#app'))
+import 'kendo/styles/web/kendo.common.core.css'
+import 'kendo/styles/web/kendo.default.css'
+import 'bootstrap/dist/css/bootstrap.css'
+
+$(document).ready(function () {
+  $('#vertical').kendoSplitter({
+    orientation: 'vertical',
+    panes: [
+      {collapsible: false},
+      {collapsible: false, size: '100px'},
+      {collapsible: false, resizable: false, size: '100px'}
+    ]
+  })
+
+  $('#horizontal').kendoSplitter({
+    panes: [
+      {collapsible: true},
+      {collapsible: false},
+      {collapsible: true}
+    ]
+  })
+})

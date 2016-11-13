@@ -23,6 +23,10 @@ module.exports = {
         loader: 'file-loader'
       },
       {
+        test: /kendo-ui-core[\///].*\.js$/,
+        loader: 'imports?jQuery=jquery'
+      },
+      {
         test: /\.jsx?$/,
         loader: 'babel-loader',
         query: {
@@ -31,6 +35,11 @@ module.exports = {
         }
       }
     ]
+  },
+  resolve: {
+    alias: {
+      'kendo': 'kendo-ui-webpack'
+    }
   },
   devtool: 'cheap-module-eval-source-map'
 }
