@@ -1,13 +1,16 @@
 import $ from 'jquery'
 import 'kendo/kendo.ui.Splitter'
+import ace from 'brace'
 
 import 'kendo/styles/web/kendo.common.core.css'
 import 'kendo/styles/web/kendo.default.css'
 import 'bootstrap/dist/css/bootstrap.css'
+import 'brace/mode/javascript'
+import 'brace/theme/tomorrow'
 import './app.css'
 
-$(document).ready(function () {
-  $('.editor').kendoSplitter({
+function setupPanes () {
+  $('.ide').kendoSplitter({
     orientation: 'horizontal',
     panes: [
       {collapsible: false},
@@ -31,4 +34,13 @@ $(document).ready(function () {
       {collapsible: false}
     ]
   })
-})
+}
+
+function setupEditor () {
+  const editor = ace.edit('grammar-editor')
+  editor.getSession().setMode('ace/mode/javascript')
+  editor.setTheme('ace/theme/tomorrow')
+}
+
+setupPanes()
+setupEditor()
