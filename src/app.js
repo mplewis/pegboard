@@ -9,8 +9,19 @@ import 'brace/mode/javascript'
 import 'brace/theme/tomorrow'
 import './app.css'
 
+let editor
+
+let _resizing = false
+function fireResize () {
+  if (_resizing) return
+  _resizing = true
+  window.dispatchEvent(new Event('resize'))
+  _resizing = false
+}
+
 function setupPanes () {
   $('.ide').kendoSplitter({
+    resize: fireResize,
     orientation: 'horizontal',
     panes: [
       {collapsible: false},
@@ -19,6 +30,7 @@ function setupPanes () {
   })
 
   $('.compiler').kendoSplitter({
+    resize: fireResize,
     orientation: 'vertical',
     panes: [
       {collapsible: false},
@@ -28,6 +40,7 @@ function setupPanes () {
   })
 
   $('.tester').kendoSplitter({
+    resize: fireResize,
     orientation: 'vertical',
     panes: [
       {collapsible: false},
@@ -37,10 +50,18 @@ function setupPanes () {
 }
 
 function setupEditor () {
-  const editor = ace.edit('grammar-editor')
+  editor = ace.edit('grammar-editor')
   editor.getSession().setMode('ace/mode/javascript')
   editor.setTheme('ace/theme/tomorrow')
 }
 
+function bindInputs () {
+  $('#compile').click(() => {
+    const source = editor.getValue()
+    console.log(source.length)
+  })
+}
+
 setupPanes()
 setupEditor()
+bindInputs()
