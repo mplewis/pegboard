@@ -4,22 +4,31 @@ import 'kendo/kendo.ui.Splitter'
 import 'kendo/styles/web/kendo.common.core.css'
 import 'kendo/styles/web/kendo.default.css'
 import 'bootstrap/dist/css/bootstrap.css'
+import './app.css'
 
 $(document).ready(function () {
-  $('#vertical').kendoSplitter({
-    orientation: 'vertical',
+  $('.editor').kendoSplitter({
+    orientation: 'horizontal',
     panes: [
       {collapsible: false},
-      {collapsible: false, size: '100px'},
-      {collapsible: false, resizable: false, size: '100px'}
+      {collapsible: false}
     ]
   })
 
-  $('#horizontal').kendoSplitter({
+  $('.compiler').kendoSplitter({
+    orientation: 'vertical',
     panes: [
-      {collapsible: true},
       {collapsible: false},
-      {collapsible: true}
+      {collapsible: false},
+      {collapsible: false}
+    ]
+  })
+
+  $('.tester').kendoSplitter({
+    orientation: 'vertical',
+    panes: [
+      {collapsible: false},
+      {collapsible: false}
     ]
   })
 })
