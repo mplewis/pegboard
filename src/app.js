@@ -10,8 +10,13 @@ import 'brace/theme/tomorrow'
 import './vendor/ace_modes/pegjs'
 import './app.css'
 
-let editor
+const prettyIndent = 2
+
+let grammarEditor
+let programEditor
 let compileResults
+let testResults
+let parser
 
 let _resizing = false
 function fireResize () {
@@ -36,7 +41,6 @@ function setupPanes () {
     orientation: 'vertical',
     panes: [
       {collapsible: false},
-      {collapsible: false},
       {collapsible: false}
     ]
   })
@@ -51,34 +55,66 @@ function setupPanes () {
   })
 }
 
-function setupEditor () {
-  console.log(require('brace/ext/modelist'))
-  editor = ace.edit('grammar-editor')
-  editor.setTheme('ace/theme/tomorrow')
-  editor.getSession().setMode('ace/mode/pegjs')
-  editor.getSession().on('change', compile)
+function setupEditors () {
+  grammarEditor = ace.edit('grammar-editor')
+  grammarEditor.setTheme('ace/theme/tomorrow')
+  grammarEditor.getSession().setMode('ace/mode/pegjs')
+
+  programEditor = ace.edit('program-editor')
+  programEditor.setTheme('ace/theme/tomorrow')
 }
 
-function compile () {
-  const source = editor.getValue()
-  try {
-    peg.generate(source, {trace: true})
-    compileResults.text('Compiled successfully!')
-  } catch (e) {
-    const err = {
-      location: e.location,
-      expected: e.expected,
-      found: e.found
-    }
-    const msg = `${e.message}\n\n${JSON.stringify(err, null, 4)}`
-    compileResults.text(msg)
-  }
+function bindInputs () {
+  let onChange = () => { compile(); parse() }
+  grammarEditor.getSession().on('change', onChange)
+  programEditor.getSession().on('change', onChange)
 }
 
 function bindOutputs () {
   compileResults = $('#compile-results')
+  testResults = $('#test-results')
+}
+
+function pretty (obj, spaces) {
+  return JSON.stringify(obj, null, spaces)
+}
+
+function errMsg (err) {
+  const msg = err.message
+  delete err.message
+  return `${msg}\n\n${pretty(err, prettyIndent)}`
+}
+
+function compile () {
+  parser = null
+  const source = grammarEditor.getValue()
+  if (!source) {
+    compileResults.text('')
+    return
+  }
+  try {
+    parser = peg.generate(source)
+    compileResults.text('Compiled successfully!')
+  } catch (e) {
+    compileResults.text(errMsg(e))
+  }
+}
+
+function parse () {
+  const source = programEditor.getValue()
+  if (!source) {
+    testResults.text('')
+    return
+  }
+  try {
+    const results = parser.parse(source)
+    testResults.text(pretty(results, prettyIndent))
+  } catch (e) {
+    testResults.text(errMsg(e))
+  }
 }
 
 setupPanes()
-setupEditor()
+setupEditors()
+bindInputs()
 bindOutputs()

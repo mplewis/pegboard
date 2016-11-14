@@ -16,8 +16,8 @@ body {
 }
 
 
-.compile-results-container pre {
+pre {
   margin: 0;
   border: none;
-  background: none
+  background: none;
 }
