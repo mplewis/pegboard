@@ -680,14 +680,13 @@ ace.define("ace/mode/pegjs_highlight_rules",["require","exports","module","ace/l
 
 });
 
-ace.define("ace/mode/pegjs",["require","exports","module","ace/lib/oop","ace/mode/text","ace/tokenizer","ace/mode/matching_brace_outdent","ace/worker/worker_client","ace/range","ace/mode/pegjs_highlight_rules","ace/mode/text_highlight_rules"], function(acequire, exports, module) {
+ace.define("ace/mode/pegjs",["require","exports","module","ace/lib/oop","ace/mode/text","ace/tokenizer","ace/mode/matching_brace_outdent","ace/range","ace/mode/pegjs_highlight_rules","ace/mode/text_highlight_rules"], function(acequire, exports, module) {
 "use strict";
 
 var oop = acequire("../lib/oop");
 var TextMode = acequire("./text").Mode;
 var Tokenizer = acequire("../tokenizer").Tokenizer;
 var MatchingBraceOutdent = acequire("./matching_brace_outdent").MatchingBraceOutdent;
-var WorkerClient = acequire("../worker/worker_client").WorkerClient;
 var Range = acequire("../range").Range;
 var PegjsHighlightRules = acequire("./pegjs_highlight_rules").PegjsHighlightRules;
 var TextHighlightRules = acequire("./text_highlight_rules").TextHighlightRules;
@@ -721,50 +720,6 @@ oop.inherits(Mode, TextMode);
     		sheet.addRule(selector, rules, index);
     	}
     }
-    this.createWorker = function(session) {
-        var markers = [];
-        var sheet = document.styleSheets[0];
-        addCSSRule(sheet, ".pegjs_highlight_info", "position: absolute;border-bottom: solid 1px gray;z-index: 2000;");
-        addCSSRule(sheet, ".pegjs_highlight_error", "position: absolute;border-bottom: solid 1px rgb(224, 4, 4);z-index: 2000;");
-        addCSSRule(sheet, ".pegjs_highlight_warning", "position: absolute;border-bottom: solid 1px #DDC50F;z-index: 2000;");
-
-        var worker = new WorkerClient(["ace"], "ace/mode/pegjs_worker", "Worker");
-        worker.attachToDocument(session.getDocument());
-        worker.on("clearMarkers", function (results){
-            session.setAnnotations(results.data);
-            for (var x=0; x < markers.length;x++){
-                session.removeMarker(markers[x]);
-            }
-            markers = [];
-        });
-        worker.on("annotate", function(results) {
-            session.setAnnotations(results.data);
-            for (var x=0, len = results.data.length, error;x<len;x++) {
-                error = results.data[x];
-                if (error.endColumn) {
-                    markers.push(session.addMarker(new Range(error.row, error.column, error.endRow, error.endColumn) , "pegjs_highlight_" + error.type, "text"));
-                }
-            }
-            session._emit("issues", results.data);
-        });
-        worker.on("terminate", function() {
-            session.clearAnnotations();
-        });
-        worker.on("ast", function (ast) {
-           session._emit("ast", ast.data);
-        });
-        worker.on("rules", function (rules) {
-           session._emit("rules", rules.data);
-        });
-        worker.on("ok", function (parsersource) {
-           session._emit("ok", parsersource.data);
-        });
-        worker.on("notok", function (message) {
-           session._emit("notok", message.data);
-        });
-        return worker;
-    };
-
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
