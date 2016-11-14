@@ -6,8 +6,8 @@ import peg from 'pegjs'
 import 'kendo/styles/web/kendo.common.core.css'
 import 'kendo/styles/web/kendo.default.css'
 import 'bootstrap/dist/css/bootstrap.css'
-import 'brace/mode/javascript'
 import 'brace/theme/tomorrow'
+import './vendor/ace_modes/pegjs'
 import './app.css'
 
 let editor
@@ -52,27 +52,27 @@ function setupPanes () {
 }
 
 function setupEditor () {
+  console.log(require('brace/ext/modelist'))
   editor = ace.edit('grammar-editor')
-  editor.getSession().setMode('ace/mode/javascript')
   editor.setTheme('ace/theme/tomorrow')
+  editor.getSession().setMode('ace/mode/pegjs')
+  editor.getSession().on('change', compile)
 }
 
-function bindInputs () {
-  $('#compile').click(() => {
-    const source = editor.getValue()
-    try {
-      peg.generate(source, {trace: true})
-      compileResults.text('Compiled successfully!')
-    } catch (e) {
-      const err = {
-        location: e.location,
-        expected: e.expected,
-        found: e.found
-      }
-      const msg = `${e.message}\n\n${JSON.stringify(err, null, 4)}`
-      compileResults.text(msg)
+function compile () {
+  const source = editor.getValue()
+  try {
+    peg.generate(source, {trace: true})
+    compileResults.text('Compiled successfully!')
+  } catch (e) {
+    const err = {
+      location: e.location,
+      expected: e.expected,
+      found: e.found
     }
-  })
+    const msg = `${e.message}\n\n${JSON.stringify(err, null, 4)}`
+    compileResults.text(msg)
+  }
 }
 
 function bindOutputs () {
@@ -81,5 +81,4 @@ function bindOutputs () {
 
 setupPanes()
 setupEditor()
-bindInputs()
 bindOutputs()
