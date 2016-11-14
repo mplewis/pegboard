@@ -11,6 +11,10 @@ module.exports = {
         loader: 'style-loader!css-loader'
       },
       {
+        test: /\.pug$/,
+        loader: 'pug-loader'
+      },
+      {
         test: /\.(jpe?g|png|gif|svg)$/,
         loader: 'file-loader'
       },
@@ -23,7 +27,7 @@ module.exports = {
         loader: 'file-loader'
       },
       {
-        test: /kendo-ui-core[\///].*\.js$/,
+        test: /kendo-ui-core[\/\/\/].*\.js$/,
         loader: 'imports?jQuery=jquery'
       },
       {

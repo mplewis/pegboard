@@ -1,12 +1,15 @@
 import $ from 'jquery'
-import 'kendo/kendo.ui.Splitter'
 import ace from 'brace'
 import peg from 'pegjs'
 
+import 'kendo/kendo.ui.Splitter'
 import 'kendo/styles/web/kendo.common.core.css'
 import 'kendo/styles/web/kendo.default.css'
+
 import 'bootstrap/dist/css/bootstrap.css'
 import 'brace/theme/tomorrow'
+
+import appTemplate from './app.pug'
 import './vendor/ace_modes/pegjs'
 import './app.css'
 
@@ -17,6 +20,12 @@ let programEditor
 let compileResults
 let testResults
 let parser
+
+function setupPage () {
+  const appHtml = appTemplate()
+  console.log(appHtml)
+  document.getElementById('app').innerHTML = appHtml
+}
 
 let _resizing = false
 function fireResize () {
@@ -31,8 +40,8 @@ function setupPanes () {
     resize: fireResize,
     orientation: 'horizontal',
     panes: [
-      {collapsible: false},
-      {collapsible: false}
+      {collapsible: false, scrollable: false},
+      {collapsible: false, scrollable: false}
     ]
   })
 
@@ -114,6 +123,7 @@ function parse () {
   }
 }
 
+setupPage()
 setupPanes()
 setupEditors()
 bindInputs()

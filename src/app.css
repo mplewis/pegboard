@@ -1,10 +1,9 @@
-body {
+#app {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  overflow: hidden;
 }
 
 .ide {
@@ -14,7 +13,6 @@ body {
 .ace_editor, code {
   font-family: "Fira Code", "Inconsolata", "Anonymous Pro", "DejaVu Sans Mono", "Monaco", "Menlo", "Ubuntu Mono", "Consolas", "source-code-pro", monospace;
 }
-
 
 pre {
   margin: 0;
