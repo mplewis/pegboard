@@ -9,8 +9,14 @@ npm install
 # Live server at http://localhost:8080/webpack-dev-server
 npm run serve
 
-# Build to dist/
+# Build to dist/ for development
 webpack
+
+# Build to dist/ for production
+webpack --config webpack.prod.config.js
+
+# Deploy to GitHub Pages
+gulp
 ```
 
 # License

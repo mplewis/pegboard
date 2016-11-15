@@ -9,7 +9,7 @@ gulp.task('clean', function () {
 })
 
 gulp.task('build', ['clean'], function () {
-  return exec('webpack')
+  return exec('webpack --config webpack.prod.config.js')
 })
 
 gulp.task('default', ['build'], function () {

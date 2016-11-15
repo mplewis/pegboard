@@ -1,3 +1,5 @@
+var maxDataUriBytes = 10000  // 10kb limit for inlined assets
+
 module.exports = {
   entry: './src/app.js',
   output: {
@@ -16,15 +18,13 @@ module.exports = {
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/,
-        loader: 'file-loader'
+        loader: 'url-loader',
+        query: {limit: maxDataUriBytes}
       },
       {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url-loader?limit=10000&minetype=application/font-woff'
-      },
-      {
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file-loader'
+        test: /\.(ttf|eot|svg|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'url-loader',
+        query: {limit: maxDataUriBytes}
       },
       {
         test: /kendo-ui-core[\/\/\/].*\.js$/,
