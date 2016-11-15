@@ -1,5 +1,5 @@
 var gulp = require('gulp')
-var debug = require('gulp-debug')
+var ghPages = require('gulp-gh-pages')
 var addSrc = require('gulp-add-src')
 var exec = require('child_process').execSync
 var del = require('del')
@@ -16,5 +16,5 @@ gulp.task('default', ['build'], function () {
   return gulp
     .src('index.html')
     .pipe(addSrc('dist/**/*', {base: '.'}))
-    .pipe(debug())
+    .pipe(ghPages())
 })
