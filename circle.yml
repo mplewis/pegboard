@@ -10,4 +10,6 @@ deployment:
   gh-pages:
     branch: master
     commands:
+      - git config --global user.email "matt@mplewis.com"
+      - git config --global user.name "Matt Lewis"
       - gulp
