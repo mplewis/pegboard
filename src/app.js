@@ -21,7 +21,6 @@ let grammarEditor
 let programEditor
 let compileResults
 let testResults
-let parser
 
 function setupPage () {
   const appHtml = appTemplate()
@@ -66,6 +65,12 @@ function setupPanes () {
   })
 }
 
+function observeEditor (editor) {
+  return Rx.Observable.fromEvent(editor.getSession(), 'change')
+    .map(() => editor.getValue())
+    .debounceTime(compileDelay)
+}
+
 function setupEditors () {
   grammarEditor = ace.edit('grammar-editor')
   grammarEditor.setTheme('ace/theme/tomorrow')
@@ -74,10 +79,27 @@ function setupEditors () {
   programEditor = ace.edit('program-editor')
   programEditor.setTheme('ace/theme/tomorrow')
 
-  Rx.Observable.fromEvent(grammarEditor.getSession(), 'change')
-    .map(() => grammarEditor.getValue())
-    .debounceTime(500)
-    .subscribe((val) => compile(val))
+  const grammarObs = observeEditor(grammarEditor)
+  const programObs = observeEditor(programEditor)
+  const parserErrObs = grammarObs.map((grammar) => {
+    try {
+      return [null, peg.generate(grammar)]
+    } catch (err) {
+      return [err, null]
+    }
+  })
+  const parserObs = parserErrObs.map((_, parser) => parser)
+
+  parserErrObs.subscribe(([err, parser]) => {
+    if (err) {
+      compileResults.text(errMsg(err))
+    } else {
+      compileResults.text('Compiled successfully!')
+    }
+  })
+
+  Rx.Observable.combineLatest(parserObs, programObs)
+    .subscribe((parser, program) => parse(parser, program))
 }
 
 function bindInputs () {
@@ -100,28 +122,27 @@ function errMsg (err) {
   return `${msg}\n\n${pretty(err, prettyIndent)}`
 }
 
-function compile (source) {
-  parser = null
-  if (!source) {
+function compile (grammar) {
+  if (!grammar) {
     compileResults.text('')
     return
   }
   try {
-    parser = peg.generate(source)
+    const parser = peg.generate(grammar)
     compileResults.text('Compiled successfully!')
+    return parser
   } catch (e) {
     compileResults.text(errMsg(e))
   }
 }
 
-function parse () {
-  const source = programEditor.getValue()
-  if (!source) {
+function parse (parser, program) {
+  if (!parser || !program) {
     testResults.text('')
     return
   }
   try {
-    const results = parser.parse(source)
+    const results = parser.parse(program)
     testResults.text(pretty(results, prettyIndent))
   } catch (e) {
     testResults.text(errMsg(e))
