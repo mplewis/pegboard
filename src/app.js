@@ -1,6 +1,7 @@
 import $ from 'jquery'
 import ace from 'brace'
 import peg from 'pegjs'
+import Rx from 'rxjs'
 
 import 'kendo/kendo.ui.Splitter'
 import 'kendo/styles/web/kendo.common.core.css'
@@ -13,7 +14,8 @@ import appTemplate from './app.pug'
 import './vendor/ace_modes/pegjs'
 import './app.css'
 
-const prettyIndent = 2
+const prettyIndent = 2  // spaces to use when pretty printing json
+const compileDelay = 250  // ms between edits before recompiling
 
 let grammarEditor
 let programEditor
@@ -71,11 +73,15 @@ function setupEditors () {
 
   programEditor = ace.edit('program-editor')
   programEditor.setTheme('ace/theme/tomorrow')
+
+  Rx.Observable.fromEvent(grammarEditor.getSession(), 'change')
+    .map(() => grammarEditor.getValue())
+    .debounceTime(500)
+    .subscribe((val) => compile(val))
 }
 
 function bindInputs () {
   let onChange = () => { compile(); parse() }
-  grammarEditor.getSession().on('change', onChange)
   programEditor.getSession().on('change', onChange)
 }
 
@@ -94,9 +100,8 @@ function errMsg (err) {
   return `${msg}\n\n${pretty(err, prettyIndent)}`
 }
 
-function compile () {
+function compile (source) {
   parser = null
-  const source = grammarEditor.getValue()
   if (!source) {
     compileResults.text('')
     return

@@ -36,6 +36,7 @@
     "jquery": "^3.1.1",
     "kendo-ui-core": "^2016.3.1028",
     "kendo-ui-webpack": "^1.0.1",
-    "pegjs": "^0.10.0"
+    "pegjs": "^0.10.0",
+    "rxjs": "^5.0.0-rc.3"
   }
 }
