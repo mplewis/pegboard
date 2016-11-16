@@ -1,4 +1,4 @@
-const prettyIndent = 2  // spaces to use when pretty printing json
+import {prettyIndent} from './config'
 
 export function pretty (obj) {
   return JSON.stringify(obj, null, prettyIndent)

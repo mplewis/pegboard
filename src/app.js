@@ -6,8 +6,7 @@ import {
   setupPanes, grammarEditor, compileResults, programEditor, testResults
 } from './dom'
 import {pretty, errMsg} from './format'
-
-const compileDelay = 250  // ms between edits before recompiling
+import {compileDelay} from './config'
 
 function observeEditor (editor) {
   return Rx.Observable.fromEvent(editor.getSession(), 'change')
