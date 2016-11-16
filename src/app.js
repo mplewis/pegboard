@@ -22,7 +22,13 @@ function setupEditors () {
   const parserObs = parserErrObs.map(([_, parser]) => parser)
 
   parserErrObs.map(([err, parser]) => {
-    if (err) { return errMsg(err) } else { return 'Compiled successfully!' }
+    if (!err && !parser) {
+      return ''
+    } else if (err) {
+      return errMsg(err)
+    } else {
+      return 'Compiled successfully!'
+    }
   }).subscribe(msg => { compileResults.innerText = msg })
 
   Rx.Observable.combineLatest(parserObs, programObs)
@@ -31,6 +37,7 @@ function setupEditors () {
 }
 
 function genParser (grammar) {
+  if (!grammar) return [null, null]
   try {
     return [null, peg.generate(grammar)]
   } catch (err) {
