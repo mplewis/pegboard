@@ -17,8 +17,6 @@ import './app.css'
 const prettyIndent = 2  // spaces to use when pretty printing json
 const compileDelay = 250  // ms between edits before recompiling
 
-let grammarEditor
-let programEditor
 let compileResults
 let testResults
 
@@ -72,11 +70,11 @@ function observeEditor (editor) {
 }
 
 function setupEditors () {
-  grammarEditor = ace.edit('grammar-editor')
+  const grammarEditor = ace.edit('grammar-editor')
   grammarEditor.setTheme('ace/theme/tomorrow')
   grammarEditor.getSession().setMode('ace/mode/pegjs')
 
-  programEditor = ace.edit('program-editor')
+  const programEditor = ace.edit('program-editor')
   programEditor.setTheme('ace/theme/tomorrow')
 
   const grammarObs = observeEditor(grammarEditor)
@@ -88,23 +86,18 @@ function setupEditors () {
       return [err, null]
     }
   })
-  const parserObs = parserErrObs.map((_, parser) => parser)
+  const parserObs = parserErrObs.map(([_, parser]) => parser)
+  parserErrObs.subscribe(i => console.log('parserErr:', i))
+  parserObs.subscribe(i => console.log('parser:', i))
 
-  parserErrObs.subscribe(([err, parser]) => {
-    if (err) {
-      compileResults.text(errMsg(err))
-    } else {
-      compileResults.text('Compiled successfully!')
-    }
-  })
+  parserErrObs.map(([err, parser]) => {
+    if (err) { return errMsg(err) } else { return 'Compiled successfully!' }
+  }).subscribe(msg => compileResults.text(msg))
 
+  Rx.Observable.combineLatest(parserObs, programObs).subscribe(i => console.log(i))
   Rx.Observable.combineLatest(parserObs, programObs)
-    .subscribe((parser, program) => parse(parser, program))
-}
-
-function bindInputs () {
-  let onChange = () => { compile(); parse() }
-  programEditor.getSession().on('change', onChange)
+    .map(([parser, program]) => parse(parser, program))
+    .subscribe(msg => testResults.text(msg))
 }
 
 function bindOutputs () {
@@ -122,35 +115,19 @@ function errMsg (err) {
   return `${msg}\n\n${pretty(err, prettyIndent)}`
 }
 
-function compile (grammar) {
-  if (!grammar) {
-    compileResults.text('')
-    return
-  }
-  try {
-    const parser = peg.generate(grammar)
-    compileResults.text('Compiled successfully!')
-    return parser
-  } catch (e) {
-    compileResults.text(errMsg(e))
-  }
-}
-
 function parse (parser, program) {
   if (!parser || !program) {
-    testResults.text('')
-    return
+    return ''
   }
   try {
-    const results = parser.parse(program)
-    testResults.text(pretty(results, prettyIndent))
+    const ast = parser.parse(program)
+    return pretty(ast, prettyIndent)
   } catch (e) {
-    testResults.text(errMsg(e))
+    return errMsg(e)
   }
 }
 
 setupPage()
 setupPanes()
 setupEditors()
-bindInputs()
 bindOutputs()
