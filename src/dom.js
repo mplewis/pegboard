@@ -33,30 +33,23 @@ function fireResize () {
 }
 
 export function setupPanes () {
-  $('.ide').kendoSplitter({
+  const mainPane = '.ide'
+  const subPanes = ['.compiler', '.tester', '.interp']
+
+  let panes = []
+  const pane = {collapsible: false, scrollable: false}
+  for (var i = 0; i < subPanes.length; i++) panes.push(pane)
+  $(mainPane).kendoSplitter({
     resize: fireResize,
     orientation: 'horizontal',
-    panes: [
-      {collapsible: false, scrollable: false},
-      {collapsible: false, scrollable: false}
-    ]
+    panes: panes
   })
 
-  $('.compiler').kendoSplitter({
-    resize: fireResize,
-    orientation: 'vertical',
-    panes: [
-      {collapsible: false},
-      {collapsible: false}
-    ]
-  })
-
-  $('.tester').kendoSplitter({
-    resize: fireResize,
-    orientation: 'vertical',
-    panes: [
-      {collapsible: false},
-      {collapsible: false}
-    ]
+  subPanes.forEach(sel => {
+    $(sel).kendoSplitter({
+      resize: fireResize,
+      orientation: 'vertical',
+      panes: [{collapsible: false}, {collapsible: false}]
+    })
   })
 }
