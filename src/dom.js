@@ -43,7 +43,7 @@ export function setupPanes () {
   const subPanes = ['.compiler', '.tester', '.interp']
 
   let panes = []
-  const pane = {collapsible: false, scrollable: false}
+  const pane = {scrollable: false}
   for (var i = 0; i < subPanes.length; i++) panes.push(pane)
   $(mainPane).kendoSplitter({
     resize: fireResize,
@@ -55,7 +55,11 @@ export function setupPanes () {
     $(sel).kendoSplitter({
       resize: fireResize,
       orientation: 'vertical',
-      panes: [{collapsible: false}, {collapsible: false}]
+      panes: [
+        {collapsible: true, scrollable: false, size: '90px'},  // info
+        {},  // editor
+        {}   // output
+      ]
     })
   })
 }
