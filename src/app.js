@@ -3,7 +3,10 @@ import Rx from 'rxjs'
 
 import './init'  // Sets up the DOM from the app template
 import {
-  setupPanes, grammarEditor, compileResults, programEditor, testResults
+  setupPanes,
+  grammarEditor, compileResults,
+  programEditor, testResults,
+  interpEditor, interpResults
 } from './dom'
 import {pretty, errMsg} from './format'
 import {compileDelay} from './config'
@@ -23,14 +26,42 @@ function setupEditors () {
   const parserObs = parserErrObs.map(([_, parser]) => parser)
 
   parserErrObs
-    .map(parserErrToMsg)
+    .map(pegErrorToMsg)
     .subscribe(msg => { compileResults.innerText = msg })
 
-  const astObs = Rx.Observable
+  const astErrObs = Rx.Observable
     .combineLatest(parserObs, programObs)
     .map(([parser, program]) => parse(parser, program))
+  const astObs = astErrObs.map(([_, ast]) => ast)
 
-  astObs.subscribe(msg => { testResults.innerText = msg })
+  astErrObs
+    .map(parseErrorToMsg)
+    .subscribe(msg => { testResults.innerText = msg })
+
+  const interpErrObs = Rx.Observable
+    .combineLatest(astObs, interpObs)
+    .map(([ast, interp]) => interpret(ast, interp))
+
+  interpErrObs
+    .map(interpErrorToMsg)
+    .subscribe(msg => { interpResults.innerText = msg })
+}
+
+function setupDemoValues () {
+  grammarEditor.setValue('test = [a-z]+')
+  programEditor.setValue('abcd')
+  interpEditor.setValue(`
+var output = ''
+var items = ast.concat(['x', 'y', 'z'])
+
+items.forEach(function (item) {
+  output += 'Item: '
+  output += item
+  output += '\\n'
+})
+
+output
+  `.trim())
 }
 
 function genParser (grammar) {
@@ -42,7 +73,7 @@ function genParser (grammar) {
   }
 }
 
-function parserErrToMsg ([err, parser]) {
+function pegErrorToMsg ([err, parser]) {
   if (!err && !parser) {
     return ''
   } else if (err) {
@@ -53,13 +84,47 @@ function parserErrToMsg ([err, parser]) {
 }
 
 function parse (parser, program) {
-  if (!parser || !program) return ''
+  if (!parser || !program) return [null, null]
   try {
-    return pretty(parser.parse(program))
+    return [null, parser.parse(program)]
   } catch (e) {
-    return errMsg(e)
+    return [errMsg(e), null]
+  }
+}
+
+function parseErrorToMsg ([err, ast]) {
+  if (!err && !ast) {
+    return ''
+  } else if (err) {
+    return errMsg(err)
+  } else {
+    return pretty(ast)
+  }
+}
+
+function interpret (ast, interpreter) {
+  if (!ast || !interpreter) return [null, null]
+  try {
+    const addAst = `var ast = ${JSON.stringify(ast)};\n`
+    const toEval = addAst + interpreter
+    // eslint-disable-next-line no-eval
+    const result = eval(toEval)
+    return [null, result]
+  } catch (e) {
+    return [errMsg(e), null]
+  }
+}
+
+function interpErrorToMsg ([err, output]) {
+  if (!err && !output) {
+    return ''
+  } else if (err) {
+    return errMsg(err)
+  } else {
+    return pretty(output)
   }
 }
 
 setupPanes()
 setupEditors()
+setupDemoValues()
