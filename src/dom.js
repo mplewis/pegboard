@@ -17,6 +17,7 @@ import './app.css'
 
 export const testResults = document.getElementById('test-results')
 export const compileResults = document.getElementById('compile-results')
+export const interpResults = document.getElementById('interp-results')
 
 export const grammarEditor = ace.edit('grammar-editor')
 grammarEditor.setTheme('ace/theme/tomorrow')
