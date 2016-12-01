@@ -8,6 +8,7 @@ import 'kendo/styles/web/kendo.default.css'
 
 // ACE
 import 'brace/theme/tomorrow'
+import 'brace/mode/javascript'
 import './vendor/ace_modes/pegjs'
 
 // Styles
@@ -23,6 +24,10 @@ grammarEditor.getSession().setMode('ace/mode/pegjs')
 
 export const programEditor = ace.edit('program-editor')
 programEditor.setTheme('ace/theme/tomorrow')
+
+export const interpEditor = ace.edit('interp-editor')
+interpEditor.setTheme('ace/theme/tomorrow')
+interpEditor.getSession().setMode('ace/mode/javascript')
 
 let _resizing = false
 function fireResize () {
