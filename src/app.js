@@ -17,22 +17,20 @@ function observeEditor (editor) {
 function setupEditors () {
   const grammarObs = observeEditor(grammarEditor)
   const programObs = observeEditor(programEditor)
+  const interpObs = observeEditor(interpEditor)
+
   const parserErrObs = grammarObs.map(genParser)
   const parserObs = parserErrObs.map(([_, parser]) => parser)
 
-  parserErrObs.map(([err, parser]) => {
-    if (!err && !parser) {
-      return ''
-    } else if (err) {
-      return errMsg(err)
-    } else {
-      return 'Compiled successfully!'
-    }
-  }).subscribe(msg => { compileResults.innerText = msg })
+  parserErrObs
+    .map(parserErrToMsg)
+    .subscribe(msg => { compileResults.innerText = msg })
 
-  Rx.Observable.combineLatest(parserObs, programObs)
+  const astObs = Rx.Observable
+    .combineLatest(parserObs, programObs)
     .map(([parser, program]) => parse(parser, program))
-    .subscribe(msg => { testResults.innerText = msg })
+
+  astObs.subscribe(msg => { testResults.innerText = msg })
 }
 
 function genParser (grammar) {
@@ -41,6 +39,16 @@ function genParser (grammar) {
     return [null, peg.generate(grammar)]
   } catch (err) {
     return [err, null]
+  }
+}
+
+function parserErrToMsg ([err, parser]) {
+  if (!err && !parser) {
+    return ''
+  } else if (err) {
+    return errMsg(err)
+  } else {
+    return 'Compiled successfully!'
   }
 }
 
