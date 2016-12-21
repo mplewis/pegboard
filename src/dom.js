@@ -39,24 +39,36 @@ function fireResize () {
 }
 
 export function setupPanes () {
-  const mainPane = '.ide'
-  const subPanes = ['.compiler', '.tester', '.interp']
+  const mainPane = '.panes'
+  const idePane = '.ide'
+  const ideSubPanes = ['.compiler', '.tester', '.interp']
+  const textPaneHeight = '90px'
+  const textPaneOptions = {collapsible: true, size: textPaneHeight}
+
+  $(mainPane).kendoSplitter({
+    resize: fireResize,
+    orientation: 'vertical',
+    panes: [
+      textPaneOptions,  // intro
+      {}  // ide
+    ]
+  })
 
   let panes = []
   const pane = {scrollable: false}
-  for (var i = 0; i < subPanes.length; i++) panes.push(pane)
-  $(mainPane).kendoSplitter({
+  for (var i = 0; i < ideSubPanes.length; i++) panes.push(pane)
+  $(idePane).kendoSplitter({
     resize: fireResize,
     orientation: 'horizontal',
     panes: panes
   })
 
-  subPanes.forEach(sel => {
+  ideSubPanes.forEach(sel => {
     $(sel).kendoSplitter({
       resize: fireResize,
       orientation: 'vertical',
       panes: [
-        {collapsible: true, scrollable: false, size: '90px'},  // info
+        textPaneOptions,  // info
         {},  // editor
         {}   // output
       ]

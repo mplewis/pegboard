@@ -10,7 +10,7 @@ html, body {
   flex-direction: column;
 }
 
-.ide {
+.panes {
   flex: 1;
 }
 

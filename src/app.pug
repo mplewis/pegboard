@@ -1,28 +1,34 @@
-.ide
-  .compiler
+.panes
+  .intro
     .section-info-container
       .section-info
-        h1 Grammar
-        p Write your <a href="http://pegjs.org/">PEG.js</a> grammar here. Output from the parser generator appears below.
-    #grammar-editor
-    div
-      pre
-        code#compile-results
-  .tester
-    .section-info-container
-      .section-info
-        h1 Program
-        p Write your program to be parsed here. The parsed abstract syntax tree appears below.
-    #program-editor
-    div
-      pre
-        code#test-results
-  .interp
-    .section-info-container
-      .section-info
-        h1 Interpreter
-        p Write your JS interpreter here. Access the abstract syntax tree through the variable <code>ast</code>.
-    #interp-editor
-    div
-      pre
-        code#interp-results
+        h1 Pegboard IDE
+        p Design, parse, and interpret programming languages. <a href="https://github.com/mplewis/pegboard">Learn more on GitHub.</a>
+  .ide
+    .compiler
+      .section-info-container
+        .section-info
+          h1 Grammar
+          p Write your <a href="http://pegjs.org/">PEG.js</a> grammar here. Output from the parser generator appears below.
+      #grammar-editor
+      div
+        pre
+          code#compile-results
+    .tester
+      .section-info-container
+        .section-info
+          h1 Program
+          p Write your program to be parsed here. The parsed abstract syntax tree appears below.
+      #program-editor
+      div
+        pre
+          code#test-results
+    .interp
+      .section-info-container
+        .section-info
+          h1 Interpreter
+          p Write your JS interpreter here. Access the abstract syntax tree through the variable <code>ast</code>.
+      #interp-editor
+      div
+        pre
+          code#interp-results
